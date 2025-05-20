@@ -41,12 +41,9 @@ class TRE_Client:
         if self.authenticated_user is None:
             return "Error: Not Authenticated"
 
-        taxable_income, tax_withheld, has_private_health = self.verify_tax_data(taxable_income, tax_withheld, has_private_health)
-        if (taxable_income or tax_withheld or has_private_health) is None:
-            return "Error: Invalid tax data"
-
+        print("calculating...")
         tax_refund = self.server.estimate_tax_return(taxable_income, tax_withheld, has_private_health)
-        return tax_refund
+        return taxable_income, tax_withheld, tax_refund
 
     def get_tax_details(self):
         while True:
@@ -60,12 +57,27 @@ class TRE_Client:
                     continue
 
                 has_private_health = has_private_health == "yes"
-                return taxable_income, tax_withheld, has_private_health
-            except ValueError:
-                print("Error: Invalid Input.")
 
-    def display_tax_return(self, tax_return):
-        print(tax_return)
+                tax_data = self.verify_tax_data(taxable_income, tax_withheld, has_private_health)
+                if tax_data is not None:
+                    return tax_data
+                print("Invalid tax data. Please try again.")
+
+            except ValueError:
+                print("Error: Please enter valid numerical values.")
+
+    def display_tax_return(self, taxable_income, tax_withheld, tax_return):
+        if tax_return is None:
+            print("Error: Invalid tax data.")
+            return
+
+        if tax_return >= 0:
+            print(f"\nOn your taxable income of ${taxable_income:,.2f}, you've paid ${tax_withheld:,.2f}.")
+            print(f"Your return estimate is ${tax_return:,.2f}.")
+        else:
+            owed_amount = abs(tax_return)
+            print(f"On your taxable income of ${taxable_income:,.2f}, you've paid ${tax_withheld:,.2f}.")
+            print(f"You owe an additional ${owed_amount:,.2f}.")
 
     def user_prompted(self):
         while True:
@@ -84,6 +96,5 @@ class TRE_Client:
                     case "Y":
                         print("Error: Not Implemented in Phase 1")
                     case "N":
-                        tax_return = self.request_estimate()
-                        print("calculating...")
-                        self.display_tax_return(tax_return)
+                        taxable_income, tax_withheld, tax_return = self.request_estimate()
+                        self.display_tax_return(taxable_income, tax_withheld, tax_return)
