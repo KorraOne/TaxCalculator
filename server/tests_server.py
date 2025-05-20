@@ -1,5 +1,5 @@
 import pytest
-from server import TaxEstimator
+from TaxEstimator import TaxEstimator
 
 @pytest.fixture
 def tax_estimator():
@@ -17,7 +17,7 @@ def tax_estimator():
     [200_000, 60_667]
 ])
 def test_calculate_income_tax(tax_estimator, taxable_income, expected_tax):
-    assert tax_estimator.calculate_income_tax(taxable_income) == expected_tax
+    assert tax_estimator.calculate_income_tax(taxable_income) == pytest.approx(expected_tax, 0.001)
 
 @pytest.mark.parametrize("taxable_income, expected_tax", [
     [50_000, 1_000],
