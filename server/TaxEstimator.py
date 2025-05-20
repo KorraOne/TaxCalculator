@@ -46,8 +46,15 @@ class TaxEstimator:
         return tax_refund
 
     def taxCalcAPI(self, person_id, TFN, taxable_income, tax_withheld, has_private_health):
-        tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
-
         net_income = 0
-        hasTFN = True if TFN else False
-        return person_id, hasTFN, taxable_income, tax_withheld, net_income, tax_refund
+        if not TFN:
+            print("here")
+            tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
+
+            hasTFN = True if TFN else False
+            return person_id, hasTFN, taxable_income, tax_withheld, net_income, tax_refund
+        else:
+            ...
+            # TODO: phase 2 database
+            tax_refund = "Not implemented"
+            return person_id, TFN, taxable_income, tax_withheld, net_income, tax_refund

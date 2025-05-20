@@ -19,7 +19,6 @@ class TRE_Client:
         self.net_income = None
 
     def authenticate_user(self, person_id, password):
-        """Authenticate user based on ID and password."""
         if len(person_id) != 6 or not person_id.isdigit():
             return False
 
@@ -31,7 +30,6 @@ class TRE_Client:
         return False
 
     def verify_tax_data(self):
-        """Validate tax data before sending to the server."""
         try:
             self.taxable_income = float(self.taxable_income)
             self.tax_withheld = float(self.tax_withheld)
@@ -47,7 +45,6 @@ class TRE_Client:
         return True
 
     def get_tax_details(self):
-        """Collect tax details from the user while ensuring valid input."""
         while True:
             try:
                 self.taxable_income = float(input("Enter taxable income: "))
@@ -70,35 +67,34 @@ class TRE_Client:
                 print("Error: Please enter valid numerical values.")
 
     def request_estimate(self):
-        """Request tax estimate from the server while ensuring data persistence."""
         if self.authenticated_user is None:
             return "Error: Not Authenticated"
 
-        if self.taxable_income is None or self.tax_withheld is None:
-            self.get_tax_details()  # Collect tax data if not already set
+        if (self.taxable_income is None or self.tax_withheld is None) and not self.TFN:
+            self.get_tax_details()
 
         print("Calculating...")
-
         _, _, self.taxable_income, self.tax_withheld, self.net_income, self.tax_refund = (
             self.server.taxCalcAPI(self.person_id, self.TFN, self.taxable_income, self.tax_withheld, self.has_private_health)
         )
 
     def display_tax_return(self):
-        """Display tax return information with correctly formatted numbers."""
         if self.tax_refund is None:
             print("Error: No tax estimate available.")
             return
 
-        if self.tax_refund >= 0:
-            print(f"\nOn your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
-            print(f"Your return estimate is ${self.tax_refund:,.2f}.")
+        if self.TFN:
+            print(self.tax_refund)
         else:
-            owed_amount = abs(self.tax_refund)
-            print(f"On your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
-            print(f"You owe an additional ${owed_amount:,.2f}.")
+            if self.tax_refund >= 0:
+                print(f"\nOn your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
+                print(f"Your return estimate is ${self.tax_refund:,.2f}.")
+            else:
+                owed_amount = abs(self.tax_refund)
+                print(f"On your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
+                print(f"You owe an additional ${owed_amount:,.2f}.")
 
     def user_prompted(self):
-        """Main loop that handles user authentication and tax estimation process."""
         while True:
             print("\nWelcome to the Personal Income Tax Return Estimator")
             print("Enter your User ID or 'Q' to quit")
@@ -110,10 +106,14 @@ class TRE_Client:
                 print("Error: Invalid Credentials")
             else:
                 print("Do you have a Tax File Number (TFN)?")
-                command = input("[Y]es - [N]o: ").upper()
-                match command:
-                    case "Y":
-                        print("Error: Not Implemented in Phase 1")
-                    case "N":
-                        self.request_estimate()
-                        self.display_tax_return()
+                if input("[Y]es - [N]o: ").upper() == "Y":
+                    while True:
+                        try:
+                            if self.person_id != int(input("User ID: ")): raise TypeError
+                            self.TFN = int(input("TFN: "))
+                            break
+                        except TypeError:
+                            print("Error: Invalid Input")
+                self.request_estimate()
+                self.display_tax_return()
+                break
