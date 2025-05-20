@@ -7,7 +7,7 @@ users = [
 class TRE_Client:
     def __init__(self):
         ns = Pyro5.api.locate_ns()
-        self.server = Pyro5.api.Proxy("PYRONAME:tax.tax")
+        self.server = Pyro5.api.Proxy("PYRONAME:tax.estimator")
         self.authenticated_user = None
 
     def authenticate_user(self, person_id, password):

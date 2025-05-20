@@ -6,6 +6,6 @@ if __name__ == "__main__":
     daemon = Pyro5.server.Daemon()
     ns = Pyro5.api.locate_ns()
     uri = daemon.register(TaxEstimator)
-    ns.register("tax.tax", uri)
+    ns.register("tax.estimator", uri)
     print("RMI Tax Estimator Server is Running. URI:", uri)
     daemon.requestLoop()
