@@ -18,14 +18,14 @@ def tax_estimator():
     [150_000, 42_816]
 ])
 def test_calculate_income_tax(tax_estimator, taxable_income, expected_tax):
-    assert tax_estimator.calculate_income_tax(taxable_income) == pytest.approx(expected_tax, 0.001)
+    assert tax_estimator._calculate_income_tax(taxable_income) == pytest.approx(expected_tax, 0.001)
 
 @pytest.mark.parametrize("taxable_income, expected_tax", [
     [50_000, 1_000],
     [100_000, 2_000],
 ])
 def test_calculate_medicare_levy(tax_estimator, taxable_income, expected_tax):
-    assert tax_estimator.calculate_medicare_levy(taxable_income) == expected_tax
+    assert tax_estimator._calculate_medicare_levy(taxable_income) == expected_tax
 
 @pytest.mark.parametrize("taxable_income, has_private_health, expected_tax", [
     [85_000, True, 0],
@@ -34,11 +34,11 @@ def test_calculate_medicare_levy(tax_estimator, taxable_income, expected_tax):
     [145_000, False, 2_175]
 ])
 def test_calculate_medicare_surcharge(tax_estimator, taxable_income, has_private_health, expected_tax):
-    assert tax_estimator.calculate_medicare_levy_surcharge(taxable_income, has_private_health) == expected_tax
+    assert tax_estimator._calculate_medicare_levy_surcharge(taxable_income, has_private_health) == expected_tax
 
 
 @pytest.mark.parametrize("taxable_income, tax_withheld, has_private_health, expected_refund", [
     [150_000, 0, True, -(40_566 + 150_000*0.02 + 0)]
 ])
 def test_estimate_tax_return(tax_estimator, taxable_income, tax_withheld, has_private_health, expected_refund):
-    assert tax_estimator.estimate_tax_return(taxable_income, tax_withheld, has_private_health) == pytest.approx(expected_refund, 0.001)
+    assert tax_estimator._estimate_tax_return(taxable_income, tax_withheld, has_private_health) == pytest.approx(expected_refund, 0.001)

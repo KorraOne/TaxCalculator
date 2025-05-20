@@ -11,7 +11,7 @@ class TaxEstimator:
             {"min": 180_001, "max": float("inf"), "rate": 0.45}
         ]
 
-    def calculate_income_tax(self, taxable_income):
+    def _calculate_income_tax(self, taxable_income):
         tax = 0
         for bracket in self.income_tax_brackets:
             if taxable_income > bracket["max"]:
@@ -21,10 +21,10 @@ class TaxEstimator:
                 break
         return tax
 
-    def calculate_medicare_levy(self, taxable_income):
+    def _calculate_medicare_levy(self, taxable_income):
         return taxable_income * 0.02
 
-    def calculate_medicare_levy_surcharge(self, taxable_income, has_private_health):
+    def _calculate_medicare_levy_surcharge(self, taxable_income, has_private_health):
         if has_private_health:
             return 0
 
@@ -36,11 +36,18 @@ class TaxEstimator:
             return taxable_income * 0.01
         return 0
 
-    def estimate_tax_return(self, taxable_income, tax_withheld, has_private_health):
-        income_tax = self.calculate_income_tax(taxable_income)
-        medicare_levy_tax = self.calculate_medicare_levy(taxable_income)
-        medicare_levy_surcharge = self.calculate_medicare_levy_surcharge(taxable_income, has_private_health)
+    def _estimate_tax_return(self, taxable_income, tax_withheld, has_private_health):
+        income_tax = self._calculate_income_tax(taxable_income)
+        medicare_levy_tax = self._calculate_medicare_levy(taxable_income)
+        medicare_levy_surcharge = self._calculate_medicare_levy_surcharge(taxable_income, has_private_health)
 
         total_tax = income_tax + medicare_levy_tax + medicare_levy_surcharge
         tax_refund = tax_withheld - total_tax
         return tax_refund
+
+    def taxCalcAPI(self, person_id, TFN, taxable_income, tax_withheld, has_private_health):
+        tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
+
+        net_income = 0
+        hasTFN = True if TFN else False
+        return person_id, hasTFN, taxable_income, tax_withheld, net_income, tax_refund
