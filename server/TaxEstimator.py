@@ -45,10 +45,26 @@ class TaxEstimator:
         tax_refund = tax_withheld - total_tax
         return tax_refund
 
-    def taxCalcAPI(self, person_id, TFN, taxable_income, tax_withheld, has_private_health):
+    def displayBiweeklyDataLog(self, income:list[int], withheld:list[int]):
+        print("\n=== Biweekly Tax Data Log ===")
+        for i in range(len(income)):
+               print(f"Fortnight {i + 1}: Taxable Income = ${income[i]:,}, Tax Withheld = ${withheld[i]:,}")
+
+        print("\nEnd of Clients Biweekly tax data log.")
+
+    def calcAnnual(self, data:list[int]):
+        total = 0
+        for num in data:
+            total += num
+        return total
+
+    def taxCalcAPI(self, person_id, TFN, income, withheld, has_private_health):
+        taxable_income = self.calcAnnual(income)
+        tax_withheld = self.calcAnnual(withheld)
+
         net_income = 0
         if not TFN:
-            print("here")
+            self.displayBiweeklyDataLog(income, withheld)
             tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
 
             hasTFN = True if TFN else False

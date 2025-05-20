@@ -12,6 +12,8 @@ class TRE_Client:
 
         self.person_id = None
         self.TFN = None
+        self.biweekly_income = []
+        self.biweekly_withheld = []
         self.taxable_income = None
         self.tax_withheld = None
         self.has_private_health = False
@@ -29,16 +31,16 @@ class TRE_Client:
                 return True
         return False
 
-    def verify_tax_data(self):
+    def verify_tax_data(self, income, withheld):
         try:
-            self.taxable_income = float(self.taxable_income)
-            self.tax_withheld = float(self.tax_withheld)
+            self.biweekly_income.append(float(income))
+            self.biweekly_withheld.append(float(withheld))
             self.has_private_health = str(self.has_private_health).strip().lower() == "yes"
         except ValueError:
             print("Error: Invalid numerical values.")
             return False
 
-        if not (self.taxable_income >= 0 and 0 <= self.tax_withheld < self.taxable_income):
+        if not (income >= 0 and 0 <= withheld < income):
             print("Error: Taxable income and tax withheld values are incorrect.")
             return False
 
@@ -47,35 +49,38 @@ class TRE_Client:
     def get_tax_details(self):
         while True:
             try:
-                self.taxable_income = float(input("Enter taxable income: "))
-                self.tax_withheld = float(input("Enter tax withheld: "))
                 self.has_private_health = input("Do you have private health insurance ('yes' or 'no')? ").strip().lower()
-
                 if self.has_private_health not in ["yes", "no"]:
                     print("Error: Enter 'yes' or 'no'.")
                     continue
-
                 self.has_private_health = self.has_private_health == "yes"
 
-                if not self.verify_tax_data():
-                    print("Invalid tax data. Please try again.")
-                    continue
-
-                break  # Exit loop on successful input
+                amountFortnights = int(input("How many fortnights of data? (max of 26)\n> "))
+                for fortnight in range(0, amountFortnights):
+                    while True:
+                        print("For Fortnight", fortnight+1)
+                        income = float(input("Enter taxable income: "))
+                        withheld = float(input("Enter tax withheld: "))
+                        if not self.verify_tax_data(income, withheld):
+                            print("Invalid tax data. Please try again.")
+                            continue
+                        break
 
             except ValueError:
                 print("Error: Please enter valid numerical values.")
+
+            break
 
     def request_estimate(self):
         if self.authenticated_user is None:
             return "Error: Not Authenticated"
 
-        if (self.taxable_income is None or self.tax_withheld is None) and not self.TFN:
+        if (self.biweekly_income == [] or self.biweekly_withheld == []) and not self.TFN:
             self.get_tax_details()
 
         print("Calculating...")
         _, _, self.taxable_income, self.tax_withheld, self.net_income, self.tax_refund = (
-            self.server.taxCalcAPI(self.person_id, self.TFN, self.taxable_income, self.tax_withheld, self.has_private_health)
+            self.server.taxCalcAPI(self.person_id, self.TFN, self.biweekly_income, self.biweekly_withheld, self.has_private_health)
         )
 
     def display_tax_return(self):
@@ -114,6 +119,15 @@ class TRE_Client:
                             break
                         except TypeError:
                             print("Error: Invalid Input")
+                else:
+                    if self.person_id != int(input("User ID: " )): print("Error: Incorrect User ID"); continue
                 self.request_estimate()
                 self.display_tax_return()
                 break
+
+def int_input(prompt, error_message) -> int:
+    try:
+        num = int(input(prompt))
+    except TypeError:
+        print(error_message)
+    return num
