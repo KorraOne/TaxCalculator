@@ -22,19 +22,17 @@ class TRE_Client:
                 return True
         return False
 
+
     def verify_tax_data(self, taxable_income, tax_withheld, has_private_health):
         try:
             taxable_income = float(taxable_income)
             tax_withheld = float(tax_withheld)
             has_private_health = str(has_private_health).strip().lower() == "yes"
         except ValueError:
-            print("valueError, 31")
             return None
 
         if taxable_income >= 0 and 0 <= tax_withheld < taxable_income:
-            print("Returns")
             return taxable_income, tax_withheld, has_private_health
-        print("Error, 40")
         return None
 
 
@@ -51,11 +49,23 @@ class TRE_Client:
         return tax_refund
 
     def get_tax_details(self):
-        taxable_income = input("taxable income: ")
-        tax_withheld = input("tax withheld: ")
-        has_private_health = input("private health, 'yes' or 'no': ")
+        while True:
+            try:
+                taxable_income = float(input("Enter taxable income: "))
+                tax_withheld = float(input("Enter tax withheld: "))
+                has_private_health = input("Do you have private health insurance ('yes' or 'no')? ").strip().lower()
 
-        return taxable_income, tax_withheld, has_private_health
+                if has_private_health not in ["yes", "no"]:
+                    print("Error: Enter 'yes' or 'no'.")
+                    continue
+
+                has_private_health = has_private_health == "yes"
+                return taxable_income, tax_withheld, has_private_health
+            except ValueError:
+                print("Error: Invalid Input.")
+
+    def display_tax_return(self, tax_return):
+        print(tax_return)
 
     def user_prompted(self):
         while True:
@@ -74,5 +84,6 @@ class TRE_Client:
                     case "Y":
                         print("Error: Not Implemented in Phase 1")
                     case "N":
-                        reply = self.request_estimate()
-                        print(reply)
+                        tax_return = self.request_estimate()
+                        print("calculating...")
+                        self.display_tax_return(tax_return)
