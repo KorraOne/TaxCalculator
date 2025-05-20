@@ -48,28 +48,22 @@ class TRE_Client:
 
     def get_tax_details(self):
         while True:
-            try:
-                self.has_private_health = input("Do you have private health insurance ('yes' or 'no')? ").strip().lower()
-                if self.has_private_health not in ["yes", "no"]:
-                    print("Error: Enter 'yes' or 'no'.")
-                    continue
+            self.has_private_health = input("Do you have private health insurance ('yes' or 'no')? ").strip().lower()
+            if self.has_private_health in ["yes", "no"]:
                 self.has_private_health = self.has_private_health == "yes"
+                break
+            print("Error: Enter 'yes' or 'no'.")
 
-                amountFortnights = int(input("How many fortnights of data? (max of 26)\n> "))
-                for fortnight in range(0, amountFortnights):
-                    while True:
-                        print("For Fortnight", fortnight+1)
-                        income = float(input("Enter taxable income: "))
-                        withheld = float(input("Enter tax withheld: "))
-                        if not self.verify_tax_data(income, withheld):
-                            print("Invalid tax data. Please try again.")
-                            continue
-                        break
-
-            except ValueError:
-                print("Error: Please enter valid numerical values.")
-
-            break
+        amountFortnights = int_input("How many fortnights of data? (max of 26)\n> ", "Error: Enter a valid number.")
+        for fortnight in range(0, min(amountFortnights, 26)):
+            while True:
+                print("For Fortnight", fortnight + 1)
+                income = int_input("Enter taxable income: ", "Error: Enter a valid income amount.")
+                withheld = int_input("Enter tax withheld: ", "Error: Enter a valid withheld amount.")
+                if not self.verify_tax_data(income, withheld):
+                    print("Invalid tax data. Please try again.")
+                    continue
+                break
 
     def request_estimate(self):
         if self.authenticated_user is None:
@@ -100,34 +94,33 @@ class TRE_Client:
                 print(f"You owe an additional ${owed_amount:,.2f}.")
 
     def user_prompted(self):
-        while True:
-            print("\nWelcome to the Personal Income Tax Return Estimator")
-            print("Enter your User ID or 'Q' to quit")
-            person_id = input("> ")
-            if person_id.upper() == "Q":
-                break
-            password = input("Enter your Password\n> ")
-            if not self.authenticate_user(person_id, password):
-                print("Error: Invalid Credentials")
-            else:
-                print("Do you have a Tax File Number (TFN)?")
-                if input("[Y]es - [N]o: ").upper() == "Y":
-                    while True:
-                        try:
-                            if self.person_id != int(input("User ID: ")): raise TypeError
-                            self.TFN = int(input("TFN: "))
-                            break
-                        except TypeError:
-                            print("Error: Invalid Input")
-                else:
-                    if self.person_id != int(input("User ID: " )): print("Error: Incorrect User ID"); continue
-                self.request_estimate()
-                self.display_tax_return()
-                break
+        print("\nWelcome to the Personal Income Tax Return Estimator")
+        person_id = input("Enter your User ID or 'Q' to quit: ")
+        if person_id.upper() == "Q":
+            return
+        password = input("Enter your Password\n> ")
+
+        if not self.authenticate_user(person_id, password):
+            print("Error: Invalid Credentials")
+            return
+
+        print("Do you have a Tax File Number (TFN)?")
+        if input("[Y]es - [N]o: ").upper() == "Y":
+            entered_id = int_input("User ID: ", "Error: Enter a valid User ID.")
+            if self.person_id != entered_id:
+                print("Error: Incorrect User ID.")
+                return
+            self.TFN = int_input("TFN: ", "Error: Enter a valid TFN.")
+        else:
+            if self.person_id != int_input("User ID: ", "Error: Enter a valid User ID."):
+                print("Error: Incorrect User ID.")
+                return
+        self.request_estimate()
+        self.display_tax_return()
 
 def int_input(prompt, error_message) -> int:
-    try:
-        num = int(input(prompt))
-    except TypeError:
-        print(error_message)
-    return num
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print(error_message)
