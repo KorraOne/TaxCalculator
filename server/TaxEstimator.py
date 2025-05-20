@@ -44,4 +44,3 @@ class TaxEstimator:
         total_tax = income_tax + medicare_levy_tax + medicare_levy_surcharge
         tax_refund = tax_withheld - total_tax
         return tax_refund
-
