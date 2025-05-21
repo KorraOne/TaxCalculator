@@ -3,22 +3,19 @@ import Pyro5.api
 @Pyro5.api.expose
 class PITD:
     def __init__(self):
-        self.data = []
+        self.data = {}
 
-    def add_user_data(self, person_id, TFN, incomes:list[int], withhelds:list[int]):
-        user_data = {
-                    "person_id": person_id,
-                    "TFN": TFN,
-                    "incomes": incomes,
-                    "withheld": withhelds
-                     }
-        self.data.append(user_data)
+    def add_user_data(self, person_id, TFN, incomes, withhelds):
+        key = f"{person_id}-{TFN}"
+        self.data[key] = {
+            "person_id": person_id,
+            "TFN": TFN,
+            "incomes": incomes,
+            "withheld": withhelds
+        }
 
     def get_user_data(self, person_id, TFN):
-        for user_data in self.data:
-            if user_data["person_id"] == person_id and user_data["TFN"] == TFN:
-                return user_data
-        return None
+        return self.data.get(f"{person_id}-{TFN}", None)
 
 
 def create_random_user_data():
@@ -29,7 +26,7 @@ def create_random_user_data():
     withhelds = []
     fortnights = random.randint(1, 26)
     for _ in range(0, fortnights):
-        incomes.append(round(random.randint(200, 2000), 2))
+        incomes.append(round(random.uniform(200, 2000), 2))
         withhelds.append(round(incomes[-1] * 0.1, 2))
 
     return person_id, TFN, incomes, withhelds
