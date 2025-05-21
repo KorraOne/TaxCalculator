@@ -3,15 +3,13 @@
 import pytest
 from client.TRE_Client import TRE_Client
 
-@pytest.fixture()
-def tre_client():
-    return TRE_Client()
+mocked_users = [
+    {"ID": 123456, "password": "pass123"}
+]
 
 @pytest.fixture()
-def mocked_users():
-    return [
-        {"ID": 123456, "password": "pass123"}
-    ]
+def tre_client():
+    return TRE_Client(mocked_users)
 
 @pytest.mark.parametrize("person_id, password, expected_result", [
     ["123456", "pass123", True],
@@ -19,8 +17,8 @@ def mocked_users():
     ["12345", "pass123", False],
     ["12345", "Incorrect", False]
 ])
-def test_authenticate_user(tre_client, mocked_users, person_id, password, expected_result):
-    assert tre_client.authenticate_user(mocked_users, person_id, password) == expected_result
+def test_authenticate_user(tre_client, person_id, password, expected_result):
+    assert tre_client.authenticate_user(person_id, password) == expected_result
 
 @pytest.mark.parametrize("income, withheld, expected", [
     (2000, 300, True),

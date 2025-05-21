@@ -17,7 +17,7 @@ def tax_estimator():
     [150_000, 40_567],
     [180_000, 51_667],
     [200_000, 60_667],
-    [150_000, 42_816]
+    [150_000, 40_566]
 ])
 def test_calculate_income_tax(tax_estimator, taxable_income, expected_tax):
     assert tax_estimator._calculate_income_tax(taxable_income) == pytest.approx(expected_tax, 0.001)

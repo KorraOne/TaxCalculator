@@ -1,14 +1,14 @@
 import Pyro5.api
-from usersData import users
 
 class TRE_Client:
     """
     A client for interacting with the Tax Return Estimator server.
     Handles authentication, tax details inputs, and displaying results.
     """
-    def __init__(self):
+    def __init__(self, users):
         """Initialises attributes."""
         self.server = None
+        self.users = users
 
         self.authenticated_user = None
         self.person_id = None
@@ -37,7 +37,7 @@ class TRE_Client:
         if len(person_id) != 6 or not person_id.isdigit():
             return False
 
-        for user in users:
+        for user in self.users:
             if user["ID"] == int(person_id) and user["password"] == password:
                 self.authenticated_user = int(person_id)
                 self.person_id = int(person_id)
