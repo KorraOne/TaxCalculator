@@ -15,6 +15,7 @@ class PITD:
         }
 
     def get_user_data(self, person_id, TFN):
+        print("Received request from Server")
         return self.data.get(f"{person_id}-{TFN}", None)
 
 

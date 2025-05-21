@@ -115,6 +115,7 @@ class TaxEstimator:
         if database == "Error: Could not reach Database":
             return database
         try:
+            print("Request to Database Sent")
             user_data = database.get_user_data(person_id, TFN)
         except:
             return
@@ -133,9 +134,9 @@ class TaxEstimator:
             has_private_health (bool): True or False if user has private health.
         Returns:
             tuple: Contains person_id, TFN status, taxable income, tax withheld, net income, and tax refund."""
+        print("Recieved Request from client")
         taxable_income = self.calcAnnual(income)
         tax_withheld = self.calcAnnual(withheld)
-
 
         if not TFN:
             self.displayBiweeklyDataLog(income, withheld)
