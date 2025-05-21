@@ -1,7 +1,7 @@
 # contains tests for server methods
 
 import pytest
-from TaxEstimator import TaxEstimator
+from server.TaxEstimator import TaxEstimator
 
 @pytest.fixture
 def tax_estimator():
