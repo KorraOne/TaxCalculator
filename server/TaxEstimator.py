@@ -134,14 +134,16 @@ class TaxEstimator:
         taxable_income = self.calcAnnual(income)
         tax_withheld = self.calcAnnual(withheld)
 
-        net_income = 0
+
         if not TFN:
             self.displayBiweeklyDataLog(income, withheld)
             tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
+            net_income = taxable_income + tax_refund - tax_withheld
 
             hasTFN = True if TFN else False
             return person_id, hasTFN, taxable_income, tax_withheld, net_income, tax_refund
         else:
             taxable_income, tax_withheld = self.calcFromPITDData(person_id, TFN)
             tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
+            net_income = taxable_income + tax_refund - tax_withheld
             return person_id, TFN, taxable_income, tax_withheld, net_income, tax_refund
