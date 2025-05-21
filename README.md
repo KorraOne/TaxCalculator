@@ -43,17 +43,27 @@ The Personal Income Tax Estimator applies **progressive tax rates** based on the
 
    In different consoles start
 
-   Pyro -```bash pyro5-ns```
+   Pyro - ```pyro5-ns```
 
-   Database -```bash python server/database.py```
+   Database - ```python server/database.py```
 
-   Server -```bash python server/server.py```
+   Server - ```python server/server.py```
    
-4. **Create a client**
+5. **Create a client**
 
     To make a client instance. Open a console in the project and run
    
-    ```bash python client/mainClient.py```
+    ```python client/mainClient.py```
+
+## Sample Data
+Both the Client and Database have access to sample data.
+
+### Clients
+| person_id | TFN | password |
+|-----------|-----|----------|
+|123456|12345678|pass|
+|111111|11111111|code|
+|654321|98765432|secret|
 
 ## Development Details
 
