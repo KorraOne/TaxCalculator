@@ -25,6 +25,7 @@ The Personal Income Tax Estimator applies **progressive tax rates** based on the
 
 ### **Additional Considerations**
 **Medicare Levy (2%)** – Applied to all taxable income 
+
 **Private Health Insurance** – If a user has private health, 0% otherwise 1%-1.5%
 
 ## Installation & Setup
@@ -35,17 +36,26 @@ The Personal Income Tax Estimator applies **progressive tax rates** based on the
 
 ### Steps to Run
 1. **Download project**
+
    Locate project on your device
 
-2. **Open Console at Project Location**
-    In different consoles start
-    a. Pyro     -```bash pyro5-ns```
-    b. Database -```ash python server/database.py```
-    c. Server   -```bash python server/server.py```
-3. **Create a client**
+3. **Open Console at Project Location**
+
+   In different consoles start
+
+   Pyro -```bash pyro5-ns```
+
+   Database -```bash python server/database.py```
+
+   Server -```bash python server/server.py```
+   
+4. **Create a client**
+
     To make a client instance. Open a console in the project and run
+   
     ```bash python client/mainClient.py```
+
+## Development Details
+
+This project was developed for an assessment in a Distributed Systems class at UNI.
     
-1. **Start the Database Server**  
-   ```bash
-   python database.py
