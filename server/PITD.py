@@ -21,8 +21,6 @@ class PITD:
 
 def create_random_user_data():
     import random
-    person_id = "123456"
-    TFN = random.randint(10_000_000, 99_999_999)
     incomes = []
     withhelds = []
     fortnights = random.randint(1, 26)
@@ -30,4 +28,4 @@ def create_random_user_data():
         incomes.append(round(random.uniform(200, 2000), 2))
         withhelds.append(round(incomes[-1] * 0.1, 2))
 
-    return person_id, TFN, incomes, withhelds
+    return incomes, withhelds

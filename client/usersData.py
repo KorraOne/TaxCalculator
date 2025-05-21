@@ -2,5 +2,6 @@
 
 users = [
     {"ID": 123456, "password": "pass"},
-    {"ID": 111111, "password": "pass"}
+    {"ID": 111111, "password": "code"},
+    {"ID": 654321, "password": "secret"}
 ]
