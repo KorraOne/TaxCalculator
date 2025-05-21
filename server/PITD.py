@@ -1,6 +1,5 @@
 import Pyro5.api
 
-@Pyro5.api.expose
 class PITD:
     def __init__(self):
         self.data = {}
@@ -14,6 +13,7 @@ class PITD:
             "withheld": withhelds
         }
 
+    @Pyro5.api.expose
     def get_user_data(self, person_id, TFN):
         print("Received request from Server")
         return self.data.get(f"{person_id}-{TFN}", None)

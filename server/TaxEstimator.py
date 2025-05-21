@@ -1,6 +1,5 @@
 import Pyro5.api
 
-@Pyro5.api.expose
 class TaxEstimator:
     """A tax estimate that calculates income tax, medicare levy,
     and medicare levy surcharge based on taxable income and private
@@ -124,6 +123,7 @@ class TaxEstimator:
         total_withheld = self.calcAnnual(user_data["withheld"])
         return total_income, total_withheld
 
+    @Pyro5.api.expose
     def taxCalcAPI(self, person_id, TFN, income, withheld, has_private_health):
         """Calculates taxable income, tax, withheld, and estimated tax return for given input.
         Args:

@@ -1,5 +1,5 @@
 from PITD import PITD, create_random_user_data
-import Pyro5
+import Pyro5.api, Pyro5.server
 
 if __name__ == "__main__":
     database = PITD()
