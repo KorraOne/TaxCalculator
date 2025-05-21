@@ -4,6 +4,7 @@ import Pyro5
 if __name__ == "__main__":
     database = PITD()
     database.add_user_data("123456", "12345678", [200, 200, 300], [40, 40, 50])
+    database.add_user_data("111111", "11111111", [5000, 4000, 7990], [300, 200, 5000])
     database.add_user_data(*create_random_user_data())
     database.add_user_data(*create_random_user_data())
 
