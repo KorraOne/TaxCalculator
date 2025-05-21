@@ -2,12 +2,13 @@ import Pyro5.api
 
 @Pyro5.api.expose
 class TaxEstimator:
-    """A tax estimatoe that calculates income tax, medicare levy,
+    """A tax estimate that calculates income tax, medicare levy,
     and medicare levy surcharge based on taxable income and private
     health status.
     """
     def __init__(self):
-        """Initalises tax brackets used for income tax calculation."""
+        """Initalises tax brackets used for income tax calculation.
+        Stores database name for connection."""
         self.income_tax_brackets = [
             {"min": 0, "max": 18_200, "rate": 0},
             {"min": 18_201, "max": 45_000, "rate": 0.19},
@@ -15,6 +16,7 @@ class TaxEstimator:
             {"min": 120_001, "max": 180_000, "rate": 0.37},
             {"min": 180_001, "max": float("inf"), "rate": 0.45}
         ]
+        self.database_name = "tax.database"
 
     def _calculate_income_tax(self, taxable_income):
         """Calculates income tax based on the provided taxable income.
@@ -101,6 +103,24 @@ class TaxEstimator:
             total += num
         return total
 
+    def connectPITD(self):
+        try:
+            ns = Pyro5.api.locate_ns()
+            return Pyro5.api.Proxy(ns.lookup(self.database_name))
+        except:
+            return "Error: Could not reach Database"
+
+    def calcFromPITDData(self, person_id, TFN):
+        database = self.connectPITD()
+        if database == "Error: Could not reach Database":
+            return database
+
+        user_data = database.get_user_data(person_id, TFN)
+
+        total_income = self.calcAnnual(user_data["incomes"])
+        total_withheld = self.calcAnnual(user_data["withheld"])
+        return total_income, total_withheld
+
     def taxCalcAPI(self, person_id, TFN, income, withheld, has_private_health):
         """Calculates taxable income, tax, withheld, and estimated tax return for given input.
         Args:
@@ -122,7 +142,6 @@ class TaxEstimator:
             hasTFN = True if TFN else False
             return person_id, hasTFN, taxable_income, tax_withheld, net_income, tax_refund
         else:
-            ...
-            # TODO: phase 2 database
-            tax_refund = "Not implemented"
+            taxable_income, tax_withheld = self.calcFromPITDData(person_id, TFN)
+            tax_refund = self._estimate_tax_return(taxable_income, tax_withheld, has_private_health)
             return person_id, TFN, taxable_income, tax_withheld, net_income, tax_refund
