@@ -114,8 +114,10 @@ class TaxEstimator:
         database = self.connectPITD()
         if database == "Error: Could not reach Database":
             return database
-
-        user_data = database.get_user_data(person_id, TFN)
+        try:
+            user_data = database.get_user_data(person_id, TFN)
+        except:
+            return
 
         total_income = self.calcAnnual(user_data["incomes"])
         total_withheld = self.calcAnnual(user_data["withheld"])

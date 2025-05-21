@@ -112,31 +112,36 @@ class TRE_Client:
             print(f"You owe an additional ${owed_amount:,.2f}.")
         print(f"Resulting in your net income of ${self.net_income:,.3f}.")
 
+    def check_user_id(self):
+        while True:
+            entered_id = int_input("User ID: ", "Error: Enter a valid ID.")
+            if entered_id == self.person_id:
+                return
+            print("Error: Does not match ID.")
 
     def user_prompted(self):
         """Main user interface structure."""
-        print("\nWelcome to the Personal Income Tax Return Estimator")
-        person_id = input("Enter your User ID or 'Q' to quit: ")
-        if person_id.upper() == "Q":
-            return
-        password = input("Enter your Password\n> ")
+        while True:
+            print("\nWelcome to the Personal Income Tax Return Estimator")
+            person_id = input("Enter your User ID or 'Q' to quit: ")
+            if person_id.upper() == "Q":
+                return
+            password = input("Enter your Password\n> ")
 
-        if not self.authenticate_user(person_id, password):
-            print("Error: Invalid Credentials")
-            return
+            if not self.authenticate_user(person_id, password):
+                print("Error: Invalid Credentials")
+            else:
+                break
 
         print("Do you have a Tax File Number (TFN)?")
         if input("[Y]es - [N]o: ").upper() == "Y":
-            entered_id = int_input("User ID: ", "Error: Enter a valid User ID.")
-            if self.person_id != entered_id:
-                print("Error: Incorrect User ID.")
-                return
             self.TFN = int_input("TFN: ", "Error: Enter a valid TFN.")
-        else:
-            if self.person_id != int_input("User ID: ", "Error: Enter a valid User ID."):
-                print("Error: Incorrect User ID.")
-                return
-        self.request_estimate()
+
+        try:
+            self.check_user_id()
+            self.request_estimate()
+        except:
+            print("Error: Request Failed, check TFN is correct")
         self.display_tax_return()
 
 
