@@ -1,3 +1,5 @@
+# contains tests for server methods
+
 import pytest
 from TaxEstimator import TaxEstimator
 

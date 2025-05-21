@@ -1,6 +1,9 @@
+# main file for creating a client
+# creates a client, connects to server, and starts client prompts
+
 from TRE_Client import TRE_Client
 
 if __name__ == "__main__":
-    while True:
-        client = TRE_Client()
-        client.user_prompted()
+    client = TRE_Client()
+    client.connect()
+    client.user_prompted()

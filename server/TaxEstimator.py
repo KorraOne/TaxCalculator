@@ -2,7 +2,12 @@ import Pyro5.api
 
 @Pyro5.api.expose
 class TaxEstimator:
+    """A tax estimatoe that calculates income tax, medicare levy,
+    and medicare levy surcharge based on taxable income and private
+    health status.
+    """
     def __init__(self):
+        """Initalises tax brackets used for income tax calculation."""
         self.income_tax_brackets = [
             {"min": 0, "max": 18_200, "rate": 0},
             {"min": 18_201, "max": 45_000, "rate": 0.19},
@@ -12,6 +17,12 @@ class TaxEstimator:
         ]
 
     def _calculate_income_tax(self, taxable_income):
+        """Calculates income tax based on the provided taxable income.
+        Args:
+             taxable_income (float): The total taxable income.
+        Returns:
+            float: The total income tax owed.
+        """
         tax = 0
         for bracket in self.income_tax_brackets:
             if taxable_income > bracket["max"]:
@@ -22,9 +33,23 @@ class TaxEstimator:
         return tax
 
     def _calculate_medicare_levy(self, taxable_income):
+        """Calculates the medicare levy based on taxable income.
+        Args:
+             taxable_income (float): The total taxable income.
+        Returns:
+            float: The medicare levy amount.
+        """
         return taxable_income * 0.02
 
     def _calculate_medicare_levy_surcharge(self, taxable_income, has_private_health):
+        """Calculates Medicare levy surcharge based on income level and
+        private health status.
+        Args:
+             taxable_income (float): The total taxable income.
+             has_private_health (bool): True or False if user has private health.
+        Returns:
+            float: the Medicare levy surcharge amount.
+        """
         if has_private_health:
             return 0
 
@@ -37,6 +62,14 @@ class TaxEstimator:
         return 0
 
     def _estimate_tax_return(self, taxable_income, tax_withheld, has_private_health):
+        """Estimates tax return based on total taxable income and tax withheld.
+        Args:
+             taxable_income (float): The total taxable income.
+             tax_withheld (float): The amount of tax withheld.
+             has_private_health (bool): True or False if user has private health.
+        Returns:
+            float: The estimated tax refund or amount owned (if negative).
+        """
         income_tax = self._calculate_income_tax(taxable_income)
         medicare_levy_tax = self._calculate_medicare_levy(taxable_income)
         medicare_levy_surcharge = self._calculate_medicare_levy_surcharge(taxable_income, has_private_health)
@@ -46,6 +79,11 @@ class TaxEstimator:
         return tax_refund
 
     def displayBiweeklyDataLog(self, income:list[int], withheld:list[int]):
+        """Displays a formatted log of biweekly income and tax withheld.
+        Args:
+            income (list[int]): List of taxable income for each fortnight.
+            withheld (list[int]): List of tax withheld amounts per fortnight.
+        """
         print("\n=== Biweekly Tax Data Log ===")
         for i in range(len(income)):
                print(f"Fortnight {i + 1}: Taxable Income = ${income[i]:,}, Tax Withheld = ${withheld[i]:,}")
@@ -53,12 +91,26 @@ class TaxEstimator:
         print("\nEnd of Clients Biweekly tax data log.")
 
     def calcAnnual(self, data:list[int]):
+        """Sums biweekly financial data.
+        Args:
+            data (list[int]): List of financial values.
+        Returns:
+            int: Total annual value."""
         total = 0
         for num in data:
             total += num
         return total
 
     def taxCalcAPI(self, person_id, TFN, income, withheld, has_private_health):
+        """Calculates taxable income, tax, withheld, and estimated tax return for given input.
+        Args:
+            person_id (int): The ID of the user.
+            TFN: (int | None): Tax File Number if available.
+            income (list[int]): List of taxable incomes.
+            withheld (list[int]): List of withheld tax.
+            has_private_health (bool): True or False if user has private health.
+        Returns:
+            tuple: Contains person_id, TFN status, taxable income, tax withheld, net income, and tax refund."""
         taxable_income = self.calcAnnual(income)
         tax_withheld = self.calcAnnual(withheld)
 

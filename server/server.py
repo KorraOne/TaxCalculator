@@ -1,3 +1,5 @@
+# creates server, creates TaxEstimator
+
 import Pyro5.server
 import Pyro5.api
 from TaxEstimator import TaxEstimator

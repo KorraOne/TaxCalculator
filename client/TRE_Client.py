@@ -1,15 +1,16 @@
 import Pyro5.api
-
-users = [
-    {"ID": 123456, "password": "a"}
-]
+from usersData import users
 
 class TRE_Client:
+    """
+    A client for interacting with the Tax Return Estimator server.
+    Handles authentication, tax details inputs, and displaying results.
+    """
     def __init__(self):
-        ns = Pyro5.api.locate_ns()
-        self.server = Pyro5.api.Proxy("PYRONAME:tax.estimator")
-        self.authenticated_user = None
+        """Initialises attributes."""
+        self.server = None
 
+        self.authenticated_user = None
         self.person_id = None
         self.TFN = None
         self.biweekly_income = []
@@ -20,7 +21,19 @@ class TRE_Client:
         self.tax_refund = None
         self.net_income = None
 
+    def connect(self):
+        """Connects to TaxEstimator server."""
+        ns = Pyro5.api.locate_ns()
+        self.server = Pyro5.api.Proxy("PYRONAME:tax.estimator")
+
     def authenticate_user(self, person_id, password):
+        """Authenticates user via ID and Password.
+        Changes state of class to be authenticated.
+        Args:
+            person_id (str): User ID string (6-digits).
+            password (str): User password.
+        Returns:
+            bool: True if authentication successful."""
         if len(person_id) != 6 or not person_id.isdigit():
             return False
 
@@ -32,6 +45,12 @@ class TRE_Client:
         return False
 
     def verify_tax_data(self, income, withheld):
+        """Verifies inputted data is valid.
+        Args:
+            income (float): Single fortnight taxable income.
+            withheld (float): Single fortnight withheld tax.
+        Returns:
+            bool: True if values are valid."""
         try:
             self.biweekly_income.append(float(income))
             self.biweekly_withheld.append(float(withheld))
@@ -47,9 +66,10 @@ class TRE_Client:
         return True
 
     def get_tax_details(self):
+        """Prompts user for details and stores them."""
         while True:
             self.has_private_health = input("Do you have private health insurance ('yes' or 'no')? ").strip().lower()
-            if self.has_private_health in ["yes", "no"]:
+            if self.has_private_health in ["yes", "no", "y", "n"]:
                 self.has_private_health = self.has_private_health == "yes"
                 break
             print("Error: Enter 'yes' or 'no'.")
@@ -66,6 +86,7 @@ class TRE_Client:
                 break
 
     def request_estimate(self):
+        """Calls servers calculation functions. Stores result."""
         if self.authenticated_user is None:
             return "Error: Not Authenticated"
 
@@ -78,6 +99,7 @@ class TRE_Client:
         )
 
     def display_tax_return(self):
+        """Displays Tax Return Estimate in readable format."""
         if self.tax_refund is None:
             print("Error: No tax estimate available.")
             return
@@ -94,6 +116,7 @@ class TRE_Client:
                 print(f"You owe an additional ${owed_amount:,.2f}.")
 
     def user_prompted(self):
+        """Main user interface structure."""
         print("\nWelcome to the Personal Income Tax Return Estimator")
         person_id = input("Enter your User ID or 'Q' to quit: ")
         if person_id.upper() == "Q":
@@ -118,7 +141,15 @@ class TRE_Client:
         self.request_estimate()
         self.display_tax_return()
 
+
 def int_input(prompt, error_message) -> int:
+    """Re-prompts until valid int is inputted.
+    Args:
+        prompt (str): Prompt displayed to user.
+        error_message (str): Error message after invalid input.
+    Returns:
+        int: Users valid input.
+    """
     while True:
         try:
             return int(input(prompt))
