@@ -104,13 +104,14 @@ class TRE_Client:
             print("Error: No tax estimate available.")
             return
 
+        print(f"\nOn your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
         if self.tax_refund >= 0:
-            print(f"\nOn your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
             print(f"Your return estimate is ${self.tax_refund:,.2f}.")
         else:
             owed_amount = abs(self.tax_refund)
-            print(f"On your taxable income of ${self.taxable_income:,.2f}, you've paid ${self.tax_withheld:,.2f}.")
             print(f"You owe an additional ${owed_amount:,.2f}.")
+        print(f"Resulting in your net income of ${self.net_income:,.3f}.")
+
 
     def user_prompted(self):
         """Main user interface structure."""
