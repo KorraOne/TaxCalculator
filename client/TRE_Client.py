@@ -23,8 +23,10 @@ class TRE_Client:
 
     def connect(self):
         """Connects to TaxEstimator server."""
-        ns = Pyro5.api.locate_ns()
-        self.server = Pyro5.api.Proxy("PYRONAME:tax.estimator")
+        IP = input("Enter IP address: ")
+        ns = Pyro5.api.locate_ns(host=IP)
+        uri = ns.lookup("tax.estimator")
+        self.server = Pyro5.api.Proxy(uri)
 
     def authenticate_user(self, person_id, password):
         """Authenticates user via ID and Password.
