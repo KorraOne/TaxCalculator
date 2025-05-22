@@ -10,10 +10,10 @@ def tre_client():
     return TRE_Client(mocked_users)
 
 @pytest.mark.parametrize("person_id, password, expected_result", [
-    ["123456", "pass123", True],
-    ["123456", "Incorrect", False],
-    ["12345", "pass123", False],
-    ["12345", "Incorrect", False]
+    ("123456", "pass123", True),
+    ("123456", "Incorrect", False),
+    ("12345", "pass123", False),
+    ("12345", "Incorrect", False)
 ])
 def test_authenticate_user(tre_client, person_id, password, expected_result):
     assert tre_client.authenticate_user(person_id, password) == expected_result
