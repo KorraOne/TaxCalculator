@@ -65,6 +65,9 @@ Both the Client and Database have access to sample data.
 |111111|11111111|code|
 |654321|98765432|secret|
 
+To add your own details, access client/userData.py to insert a user. 
+
+To add data to the database you must use server/database.py and use the .add_user_data(*) method shown.
 ## Development Details
 
 This project was developed for an assessment in a Distributed Systems class at UNI.
