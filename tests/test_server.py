@@ -1,5 +1,3 @@
-# contains tests for server methods
-
 import pytest
 from server.TaxEstimator import TaxEstimator
 
