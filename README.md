@@ -9,7 +9,9 @@ The PITRE is made up of three sytems, the client, the server, and the database. 
 
 ## Features
 Tax return calculation - Calculates income tax, medicare levy tax, and medicare levy surcharge
+
 Input Data - Users can input their Fortnightly pay and withholding
+
 Database Data - If the user has a TFN the system can find their taxable income and withholding automatically
 
 ## Tax Calculation Rates
