@@ -1,5 +1,3 @@
-"""Must remove import of users in TRE_Client to run tests"""
-
 import pytest
 from client.TRE_Client import TRE_Client
 
