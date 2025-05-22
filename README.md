@@ -32,7 +32,7 @@ The Personal Income Tax Estimator applies **progressive tax rates** based on the
 ### Prerequisites
 - Python 3.x  
 - Pyro5 (`pip install Pyro5`)  
-- pytest (for developers) 
+- PyTest (for developers) 
 
 ### Steps to Run
 1. **Download project**
@@ -71,4 +71,5 @@ To add data to the database you must use server/database.py and use the .add_use
 ## Development Details
 
 This project was developed for an assessment in a Distributed Systems class at UNI.
-    
+
+[GitHub Repo](https://github.com/KorraOne/TaxCalculator)
