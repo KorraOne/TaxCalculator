@@ -13,7 +13,7 @@ if __name__ == "__main__":
         uri = daemon.register(database)
         ns.register("tax.database", uri)
 
-        print(database.data)
+        # print(database.data)
         print("Database Server is running...")
         daemon.requestLoop()
     except:
